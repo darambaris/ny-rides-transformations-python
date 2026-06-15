@@ -1,4 +1,4 @@
-.PHONY: install test coverage lint format download-files build-silver build-gold generate-pipeline
+.PHONY: install test coverage lint format download-files build-silver build-gold generate-pipeline setup-env
 
 RAW_PATH ?= data/raw
 SILVER_PATH ?= data/silver
@@ -54,3 +54,9 @@ build-gold:
 		--gold-path $(GOLD_PATH)
 
 generate-pipeline: download-files build-silver build-gold
+
+setup-env:
+	@echo "Setting up environment..."
+	@source .env.local && echo "✓ JAVA_HOME configured: $$JAVA_HOME"
+	@java -version 2>&1 | head -1
+	@echo "✓ Java is ready for PySpark"
