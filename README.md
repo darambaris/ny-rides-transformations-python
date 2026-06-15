@@ -165,14 +165,14 @@ Current test coverage is approximately 84%.
 
 ## Execute Pipeline
 
-Run the complete pipeline:
+Run the complete pipeline for the exercise-required date range (2025-01-01 to 2025-05-31):
 
 ```bash
 source .env.local
-make generate-pipeline
+make generate-pipeline START_DATE=2025-01-01 END_DATE=2025-05-31
 ```
 
-Run with custom date range:
+Optional: run with another custom date range:
 
 ```bash
 source .env.local
@@ -252,13 +252,13 @@ docker build -f docker/Dockerfile -t ny-rides .
 Run pipeline in a single container run:
 
 ```bash
-docker run --rm ny-rides sh -lc 'make generate-pipeline START_DATE=2025-05-01 END_DATE=2025-05-31'
+docker run --rm ny-rides sh -lc 'make generate-pipeline START_DATE=2025-01-01 END_DATE=2025-05-31'
 ```
 
 Recommended: use Docker Compose with persistent volumes (`data/` and `artifacts/`):
 
 ```bash
-docker compose -f docker/docker-compose.yml run --rm ny-rides-pipeline
+docker compose -f docker/docker-compose.yml run --rm -e START_DATE=2025-01-01 -e END_DATE=2025-05-31 ny-rides-pipeline
 ```
 
 Run questions (Q1 and Q2) in Docker after pipeline:
@@ -267,7 +267,7 @@ Run questions (Q1 and Q2) in Docker after pipeline:
 docker compose -f docker/docker-compose.yml run --rm ny-rides-questions
 ```
 
-Run pipeline with custom dates in Docker Compose:
+Optional: run pipeline with custom dates in Docker Compose:
 
 ```bash
 docker compose -f docker/docker-compose.yml run --rm -e START_DATE=2025-05-01 -e END_DATE=2025-05-31 ny-rides-pipeline

@@ -117,7 +117,7 @@ class QualityValidator:
         duplicated_rows = total_rows - df.dropDuplicates().count()
         checks.append(
             {
-                "name": "duplicados",
+                "name": "duplicated",
                 "passed": duplicated_rows == 0,
                 "failed_rows": int(duplicated_rows),
                 "failure_percentage": QualityValidator._failure_percentage(
