@@ -1,6 +1,13 @@
 from ny_rides.quality.contract_validator import ContractValidator
 import pytest
-from pyspark.sql.types import DoubleType, IntegerType, StringType, StructField, StructType, TimestampType
+from pyspark.sql.types import (
+    DoubleType,
+    IntegerType,
+    StringType,
+    StructField,
+    StructType,
+    TimestampType,
+)
 
 
 class FakeSparkDataFrame:
@@ -77,7 +84,7 @@ def test_should_fail_when_column_types_are_invalid():
 
     with pytest.raises(
         ValueError,
-        match="Invalid column types",
+        match="Schema validation failed",
     ):
         ContractValidator.validate_column_types(df)
 

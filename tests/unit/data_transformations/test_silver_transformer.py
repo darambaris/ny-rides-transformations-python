@@ -81,13 +81,11 @@ def test_should_apply_expected_enrichment_columns(mocker):
     assert result == silver_df_with_partitions
 
     initial_added_columns = [
-        call.args[0]
-        for call in silver_df.withColumn.call_args_list
+        call.args[0] for call in silver_df.withColumn.call_args_list
     ]
 
     final_added_columns = [
-        call.args[0]
-        for call in silver_df_with_partitions.withColumn.call_args_list
+        call.args[0] for call in silver_df_with_partitions.withColumn.call_args_list
     ]
 
     assert "VendorID" in initial_added_columns

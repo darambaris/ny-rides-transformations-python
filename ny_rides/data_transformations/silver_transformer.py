@@ -3,7 +3,6 @@ from pyspark.sql.functions import col, month, unix_timestamp, year
 
 
 class SilverTransformer:
-
     def transform(self, dataframe):
         silver_df = dataframe.select(*YellowTaxiContract.REQUIRED_COLUMNS)
 

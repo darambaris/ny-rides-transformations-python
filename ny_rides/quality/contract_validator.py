@@ -16,14 +16,10 @@ from pyspark.sql.types import (
 
 
 class ContractValidator:
-
     @staticmethod
     def _validate_column_types_spark(df: SparkDataFrame):
         errors = []
-        schema_by_col = {
-            field.name: field.dataType
-            for field in df.schema.fields
-        }
+        schema_by_col = {field.name: field.dataType for field in df.schema.fields}
 
         for column, expected_type in YellowTaxiContract.COLUMN_TYPE_RULES.items():
             data_type = schema_by_col.get(column)
@@ -33,7 +29,8 @@ class ContractValidator:
             ):
                 errors.append(f"{column} must be integer")
             elif expected_type == "numeric" and not isinstance(
-                data_type, (IntegerType, LongType, ShortType, FloatType, DoubleType, DecimalType)
+                data_type,
+                (IntegerType, LongType, ShortType, FloatType, DoubleType, DecimalType),
             ):
                 errors.append(f"{column} must be numeric")
             elif expected_type == "datetime" and not isinstance(
@@ -42,23 +39,14 @@ class ContractValidator:
                 errors.append(f"{column} must be datetime")
 
         if errors:
-            raise ValueError(
-                "Invalid column types: " + "; ".join(errors)
-            )
+            raise ValueError(f"Schema validation failed. {'; '.join(errors)}")
 
     @staticmethod
     def validate_columns(df: SparkDataFrame):
-        missing_columns = (
-            set(
-                YellowTaxiContract.REQUIRED_COLUMNS
-            )
-            - set(df.columns)
-        )
+        missing_columns = set(YellowTaxiContract.REQUIRED_COLUMNS) - set(df.columns)
 
         if missing_columns:
-            raise ValueError(
-                f"Missing required columns: {sorted(missing_columns)}"
-            )
+            raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
 
     @staticmethod
     def validate_column_types(df: SparkDataFrame):

@@ -67,6 +67,26 @@ The contract validator checks:
 - Presence of all required columns.
 - Expected column types defined in `YellowTaxiContract.COLUMN_TYPE_RULES`.
 
+## Quality Assessment
+
+The Silver pipeline executes a set of quality validations before publishing data.
+
+**Validation Rules:**
+- Required columns presence
+- Data types correctness
+- Null checks in required columns
+- Duplicate record detection
+- Temporal consistency checks (pickup <= dropoff)
+- Negative amount detection
+
+**Results for Jan-May 2023:**
+- **19.7M rows** analyzed
+- **159 duplicated records** detected (0.0008%)
+- **562 records** with invalid pickup/dropoff ordering (0.0028%)
+- **372k records** with negative total_amount values (1.88%)
+
+Quality reports are generated as JSON artifacts in `artifacts/quality/silver/` with detailed check results and failure percentages.
+
 ## Local Commands
 
 Install dependencies:

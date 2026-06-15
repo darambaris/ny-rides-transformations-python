@@ -2,6 +2,7 @@
 
 RAW_PATH ?= data/raw
 SILVER_PATH ?= data/silver
+QUALITY_REPORT_DIR ?= artifacts/quality/silver
 
 install:
 	poetry install
@@ -40,4 +41,5 @@ download-files:
 build-silver:
 	poetry run python -m ny_rides.jobs.build_silver \
 		--raw-path $(RAW_PATH) \
-		--silver-path $(SILVER_PATH)
+		--silver-path $(SILVER_PATH) \
+		--quality-report-dir $(QUALITY_REPORT_DIR)

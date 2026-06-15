@@ -1,8 +1,6 @@
 import json
 from datetime import datetime
 
-import pytest
-
 from ny_rides.jobs.download_files import DownloadResult
 from ny_rides.metadata.manifest_ingestion_writer import write_manifest
 
