@@ -5,8 +5,9 @@ from datetime import date
 from ny_rides.ingestion.tlc_downloader import TLCDownloader
 from ny_rides.shared.logging import configure_logging
 
-import logging
+from ny_rides.storage.local_storage import LocalStorage
 
+import logging
 logger = logging.getLogger(__name__)
 
 
@@ -28,12 +29,14 @@ def execute(start_date: date, end_date: date) -> list[DownloadResult]:
         end_date=end_date,
     )
 
+    storage = LocalStorage(base_path="data/raw")
+
     for file in files:
         try:
-            downloader.download_file(file)
+            content = downloader.download_file(file)
+            storage.save(filename=file.name, content=content)
             results.append(DownloadResult(file_name=file.name, success=True))
         except Exception as e:
-            logger.exception("Failed to download file %s", file.name)
             results.append(
                 DownloadResult(file_name=file.name, success=False, error_message=str(e))
             )
@@ -59,7 +62,6 @@ def log_summary(results: list[DownloadResult]) -> None:
         logger.info(message)
     else:
         logger.warning(message)
-
 
 
 def main():
