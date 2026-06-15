@@ -1,5 +1,7 @@
 .PHONY: install test coverage lint format download-files
 
+OUTPUT_DIR ?= data/raw
+
 install:
 	poetry install
 
@@ -31,4 +33,5 @@ clean:
 download-files:
 	poetry run python -m ny_rides.jobs.download_files \
 		--start-date 2025-01-01 \
-		--end-date 2025-05-31
+		--end-date 2025-05-31 \
+		--output-dir $(OUTPUT_DIR)

@@ -38,6 +38,7 @@ def test_should_download_all_files_successfully(mocker):
     results = execute(
         start_date=date(2024, 1, 1),
         end_date=date(2024, 2, 29),
+        output_dir="data/raw",
     )
 
     assert len(results) == 2
@@ -79,6 +80,7 @@ def test_should_continue_when_download_fails(mocker):
     results = execute(
         start_date=date(2024, 1, 1),
         end_date=date(2024, 2, 29),
+        output_dir="data/raw",
     )
 
     assert len(results) == 2
@@ -109,6 +111,7 @@ def test_should_return_empty_results_when_no_files_are_generated(
     results = execute(
         start_date=date(2024, 1, 1),
         end_date=date(2024, 1, 31),
+        output_dir="data/raw",
     )
 
     assert results == []
@@ -146,6 +149,7 @@ def test_should_mark_download_as_failed_when_storage_save_fails(
     results = execute(
         start_date=date(2024, 1, 1),
         end_date=date(2024, 1, 31),
+        output_dir="data/raw",
     )
 
     assert len(results) == 1
@@ -217,6 +221,7 @@ def test_main_should_configure_logging_execute_and_log_summary(
     mock_parser.parse_args.return_value = SimpleNamespace(
         start_date="2024-01-01",
         end_date="2024-01-31",
+        output_dir="tmp/downloads",
     )
 
     mock_argument_parser = mocker.patch(
@@ -236,10 +241,11 @@ def test_main_should_configure_logging_execute_and_log_summary(
 
     mock_configure_logging.assert_called_once()
     mock_argument_parser.assert_called_once()
-    assert mock_parser.add_argument.call_count == 2
+    assert mock_parser.add_argument.call_count == 3
     mock_execute.assert_called_once_with(
         start_date=date(2024, 1, 1),
         end_date=date(2024, 1, 31),
+        output_dir="tmp/downloads",
     )
     mock_log_summary.assert_called_once_with(
         [DownloadResult(file_name="file.parquet", success=True)]

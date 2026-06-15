@@ -19,7 +19,11 @@ class DownloadResult:
     error_message: str | None = None
 
 
-def execute(start_date: date, end_date: date) -> list[DownloadResult]:
+def execute(
+    start_date: date,
+    end_date: date,
+    output_dir: str,
+) -> list[DownloadResult]:
 
     downloader = TLCDownloader()
 
@@ -30,7 +34,7 @@ def execute(start_date: date, end_date: date) -> list[DownloadResult]:
         end_date=end_date,
     )
 
-    storage = LocalStorage(base_path="data/raw")
+    storage = LocalStorage(base_path=output_dir)
 
     for file in files:
         try:
@@ -73,12 +77,14 @@ def main():
 
     parser.add_argument("--start-date", required=True)
     parser.add_argument("--end-date", required=True)
+    parser.add_argument("--output-dir", required=True)
 
     args = parser.parse_args()
 
     results = execute(
         start_date=date.fromisoformat(args.start_date),
         end_date=date.fromisoformat(args.end_date),
+        output_dir=args.output_dir,
     )
 
     log_summary(results)
