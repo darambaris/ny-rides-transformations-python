@@ -1,28 +1,32 @@
 from ny_rides.quality.contract_validator import ContractValidator
-import pandas as pd
 import pytest
+from pyspark.sql.types import DoubleType, IntegerType, StringType, StructField, StructType, TimestampType
 
 
-def _valid_dataframe() -> pd.DataFrame:
-    return pd.DataFrame(
-        {
-            "VendorID": [1, 2],
-            "passenger_count": [1, 2],
-            "total_amount": [12.5, 19.8],
-            "tpep_pickup_datetime": pd.to_datetime(
-                [
-                    "2025-01-01 10:00:00",
-                    "2025-01-01 11:00:00",
-                ]
-            ),
-            "tpep_dropoff_datetime": pd.to_datetime(
-                [
-                    "2025-01-01 10:20:00",
-                    "2025-01-01 11:15:00",
-                ]
-            ),
-        }
+class FakeSparkDataFrame:
+    def __init__(self, columns, schema):
+        self.columns = columns
+        self.schema = schema
+
+
+def _valid_dataframe():
+    columns = [
+        "VendorID",
+        "passenger_count",
+        "total_amount",
+        "tpep_pickup_datetime",
+        "tpep_dropoff_datetime",
+    ]
+    schema = StructType(
+        [
+            StructField("VendorID", IntegerType(), True),
+            StructField("passenger_count", IntegerType(), True),
+            StructField("total_amount", DoubleType(), True),
+            StructField("tpep_pickup_datetime", TimestampType(), True),
+            StructField("tpep_dropoff_datetime", TimestampType(), True),
+        ]
     )
+    return FakeSparkDataFrame(columns=columns, schema=schema)
 
 
 def test_should_accept_valid_schema():
@@ -32,7 +36,11 @@ def test_should_accept_valid_schema():
 
 
 def test_should_fail_when_required_column_is_missing():
-    df = _valid_dataframe().drop(columns=["total_amount"])
+    valid_df = _valid_dataframe()
+    df = FakeSparkDataFrame(
+        columns=[c for c in valid_df.columns if c != "total_amount"],
+        schema=valid_df.schema,
+    )
 
     with pytest.raises(
         ValueError,
@@ -48,9 +56,24 @@ def test_should_accept_valid_column_types():
 
 
 def test_should_fail_when_column_types_are_invalid():
-    df = _valid_dataframe().copy()
-    df["passenger_count"] = df["passenger_count"].astype(float)
-    df["tpep_pickup_datetime"] = df["tpep_pickup_datetime"].astype(str)
+    df = FakeSparkDataFrame(
+        columns=[
+            "VendorID",
+            "passenger_count",
+            "total_amount",
+            "tpep_pickup_datetime",
+            "tpep_dropoff_datetime",
+        ],
+        schema=StructType(
+            [
+                StructField("VendorID", IntegerType(), True),
+                StructField("passenger_count", DoubleType(), True),
+                StructField("total_amount", DoubleType(), True),
+                StructField("tpep_pickup_datetime", StringType(), True),
+                StructField("tpep_dropoff_datetime", TimestampType(), True),
+            ]
+        ),
+    )
 
     with pytest.raises(
         ValueError,
