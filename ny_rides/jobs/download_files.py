@@ -60,13 +60,6 @@ def log_summary(results: list[DownloadResult]) -> None:
     else:
         logger.warning(message)
 
-        for result in results:
-            if not result.success:
-                logger.warning(
-                    "Download Failure | File=%s Error=%s",
-                    result.file_name,
-                    result.error_message,
-                )
 
 
 def main():
