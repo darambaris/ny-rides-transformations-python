@@ -8,17 +8,17 @@ Modern data platform for NYC Taxi trip analytics with layered architecture, data
 ### Install dependencies
 
 ```bash
-poetry install
+make install
 ```
 
 ### Run tests
 
 ```bash
-poetry run pytest
+make test
 ```
 
 ### Run coverage
 
 ```bash
-poetry run pytest --cov=ny_rides --cov-report=term-missing
+make coverage
 ```

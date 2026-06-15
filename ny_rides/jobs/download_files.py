@@ -3,6 +3,7 @@ from datetime import date
 
 from ny_rides.ingestion.tlc_downloader import TLCDownloader
 
+
 def main():
     parser = ArgumentParser()
 
@@ -19,6 +20,7 @@ def main():
     )
 
     print(files)
+
 
 if __name__ == "__main__":
     main()
