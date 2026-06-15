@@ -80,7 +80,7 @@ ny-rides-transformations-python/
 │   ├── metadata/
 │   ├── quality/
 │   ├── storage/
-│   ├── transformations/
+│   ├── data_transformations/
 │   └── shared/
 │
 ├── analysis/
@@ -101,9 +101,10 @@ ny-rides-transformations-python/
 
 ## Requirements
 
-* Python 3.13
-* Java 17
+* Python >= 3.12
+* Java (set `JAVA_HOME` in `.env.local`)
 * Poetry
+* Docker (optional)
 
 ---
 
@@ -111,6 +112,18 @@ ny-rides-transformations-python/
 
 ```bash
 poetry install
+```
+
+Configure environment variables for Spark/Java:
+
+```bash
+source .env.local
+```
+
+Validate Java is available for Spark:
+
+```bash
+make setup-env
 ```
 
 ---
@@ -130,7 +143,15 @@ Current test coverage is approximately 84%.
 Run the complete pipeline:
 
 ```bash
+source .env.local
 make generate-pipeline
+```
+
+Run with custom date range:
+
+```bash
+source .env.local
+make generate-pipeline START_DATE=2025-05-01 END_DATE=2025-05-31
 ```
 
 This command executes:
@@ -186,20 +207,45 @@ and analyzed in:
 analysis/
 ```
 
+Run notebook locally:
+
+```bash
+source .env.local
+poetry run jupyter notebook analysis/questions.ipynb
+```
+
 ---
 
 ## Docker
 
-Build image:
+Build image from Dockerfile:
 
 ```bash
 docker build -f docker/Dockerfile -t ny-rides .
 ```
 
-Run pipeline:
+Run pipeline in a single container run:
 
 ```bash
-docker run --rm ny-rides
+docker run --rm ny-rides sh -lc 'make generate-pipeline START_DATE=2025-05-01 END_DATE=2025-05-31'
+```
+
+Recommended: use Docker Compose with persistent volumes (`data/` and `artifacts/`):
+
+```bash
+docker compose -f docker/docker-compose.yml run --rm ny-rides-pipeline
+```
+
+Run questions (Q1 and Q2) in Docker after pipeline:
+
+```bash
+docker compose -f docker/docker-compose.yml run --rm ny-rides-questions
+```
+
+Run pipeline with custom dates in Docker Compose:
+
+```bash
+docker compose -f docker/docker-compose.yml run --rm -e START_DATE=2025-05-01 -e END_DATE=2025-05-31 ny-rides-pipeline
 ```
 
 ---
@@ -212,6 +258,3 @@ docker run --rm ny-rides
 * Data lineage tracking
 * Incremental processing
 * AI-based reliability analysis using quality reports and metadata artifacts
-
-```
-```

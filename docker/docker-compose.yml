@@ -3,3 +3,36 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile
+    image: ny-rides
+    working_dir: /app
+    volumes:
+      - ../data:/app/data
+      - ../artifacts:/app/artifacts
+      - ../analysis:/app/analysis
+    command: bash
+
+  ny-rides-pipeline:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: ny-rides
+    working_dir: /app
+    volumes:
+      - ../data:/app/data
+      - ../artifacts:/app/artifacts
+    environment:
+      START_DATE: "2025-01-01"
+      END_DATE: "2025-05-31"
+    command: sh -lc 'make generate-pipeline START_DATE=$$START_DATE END_DATE=$$END_DATE'
+
+  ny-rides-questions:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: ny-rides
+    working_dir: /app
+    volumes:
+      - ../data:/app/data
+      - ../artifacts:/app/artifacts
+      - ../analysis:/app/analysis
+    command: sh docker/run_questions.sh

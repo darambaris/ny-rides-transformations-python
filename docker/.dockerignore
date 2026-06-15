@@ -1,0 +1,11 @@
+**pycache**/
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+.git/
+.idea/
+.vscode/
+
+data/
+artifacts/
