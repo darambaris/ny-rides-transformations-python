@@ -1,0 +1,5 @@
+services:
+  ny-rides:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
