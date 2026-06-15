@@ -38,7 +38,12 @@ def test_should_return_path_with_timestamp_filename(mocker, tmp_path):
         "ny_rides.metadata.manifest_quality_writer.datetime",
     ).now.return_value = mock_now
 
-    report = {"execution_timestamp": mock_now.isoformat(), "total_rows": 100, "all_checks_passed": True, "checks": []}
+    report = {
+        "execution_timestamp": mock_now.isoformat(),
+        "total_rows": 100,
+        "all_checks_passed": True,
+        "checks": [],
+    }
 
     path = write_manifest(report, str(tmp_path))
 
@@ -106,7 +111,12 @@ def test_should_use_default_output_dir_when_not_specified(mocker):
         return_value=mock_path,
     )
 
-    report = {"execution_timestamp": datetime.now().isoformat(), "total_rows": 0, "all_checks_passed": True, "checks": []}
+    report = {
+        "execution_timestamp": datetime.now().isoformat(),
+        "total_rows": 0,
+        "all_checks_passed": True,
+        "checks": [],
+    }
 
     write_manifest(report)
 

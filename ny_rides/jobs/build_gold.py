@@ -10,7 +10,6 @@ LOGGER = logging.getLogger(__name__)
 
 
 class BuildGoldJob:
-
     def __init__(
         self,
         spark,
@@ -46,9 +45,7 @@ class BuildGoldJob:
             monthly_rows,
         )
 
-        may_hourly_df = self.transformer.build_hourly_average_passenger_count(
-            silver_df
-        )
+        may_hourly_df = self.transformer.build_hourly_average_passenger_count(silver_df)
         hourly_output_path = f"{gold_path}/hourly_average_passenger_count"
         may_hourly_df.write.mode("overwrite").parquet(hourly_output_path)
         hourly_rows = may_hourly_df.count()
