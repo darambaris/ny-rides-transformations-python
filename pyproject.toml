@@ -22,6 +22,10 @@ dev = [
     "pytest-cov (>=7.1.0,<8.0.0)"
 ]
 
+[tool.poetry]
+packages = [
+    { include = "ny_rides" }
+]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
