@@ -56,5 +56,6 @@ build-gold:
 generate-pipeline: download-files build-silver build-gold
 
 setup-env:
-	@test -n "$$JAVA_HOME" || (echo "JAVA_HOME is not set" && exit 1)
-	@java -version
+	@test -n "$$JAVA_HOME" || (echo "JAVA_HOME is not set. Configure it in .env.local" && exit 1)
+	@test -x "$$JAVA_HOME/bin/java" || (echo "Invalid JAVA_HOME: $$JAVA_HOME" && exit 1)
+	@"$$JAVA_HOME/bin/java" -version

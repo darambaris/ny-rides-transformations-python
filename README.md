@@ -118,7 +118,18 @@ Configure environment variables for Spark/Java:
 
 ```bash
 cp .env.example .env.local
+# Edit .env.local and set JAVA_HOME for your machine
 source .env.local
+```
+
+`JAVA_HOME` must be configured by each user/device. Typical values:
+
+```bash
+# macOS (Homebrew)
+JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
+
+# Linux
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ```
 
 If `.env.local` is already tracked by git in your clone, untrack it once:
@@ -218,7 +229,7 @@ Run notebook locally:
 
 ```bash
 source .env.local
-poetry run jupyter notebook analysis/questions.ipynb
+# Open analysis/questions.ipynb in VS Code and run cells with the selected Poetry kernel
 ```
 
 ---
