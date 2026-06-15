@@ -56,7 +56,5 @@ build-gold:
 generate-pipeline: download-files build-silver build-gold
 
 setup-env:
-	@echo "Setting up environment..."
-	@source .env.local && echo "✓ JAVA_HOME configured: $$JAVA_HOME"
-	@java -version 2>&1 | head -1
-	@echo "✓ Java is ready for PySpark"
+	@test -n "$$JAVA_HOME" || (echo "JAVA_HOME is not set" && exit 1)
+	@java -version
