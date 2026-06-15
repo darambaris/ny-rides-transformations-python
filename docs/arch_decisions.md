@@ -83,6 +83,13 @@ Average total trip amount by month.
 
 Average passenger count by hour of day.
 
+Schema:
+
+* pickup_year
+* pickup_month
+* pickup_hour
+* avg_passenger_count
+
 ---
 
 ## 2. Contract Validation

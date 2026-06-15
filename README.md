@@ -66,6 +66,13 @@ Generated analytical datasets:
 * monthly_average_total_amount
 * hourly_average_passenger_count
 
+`hourly_average_passenger_count` is generated with:
+
+* pickup_year
+* pickup_month
+* pickup_hour
+* avg_passenger_count
+
 ---
 
 ## Project Structure
@@ -212,13 +219,6 @@ data/gold/monthly_average_total_amount
 ### Question 2
 
 What is the average passenger count by hour of day during May?
-
-To answer this specifically for May, run the pipeline with:
-
-```bash
-source .env.local
-make generate-pipeline START_DATE=2025-05-01 END_DATE=2025-05-31
-```
 
 Answer generated from:
 
