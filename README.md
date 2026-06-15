@@ -1,164 +1,217 @@
 # NY Rides Transformations
 
-Python project for ingesting NYC Yellow Taxi trip files, storing them in a partitioned raw layout, and validating tabular contracts with lightweight unit tests.
+Data Engineering challenge solution implementing a batch data pipeline for the NYC TLC Yellow Taxi dataset using Python and Apache Spark.
 
-## What Exists Today
+## Overview
 
-The current repository implements:
+The pipeline ingests raw taxi trip data, validates data contracts, executes quality checks, generates analytical datasets, and answers the business questions proposed in the challenge.
 
-- Monthly file generation for NYC Yellow Taxi parquet files.
-- Download job with error handling and execution summary.
-- Local raw storage partitioned as `year=YYYY/month=MM`.
-- Ingestion manifest generation in `artifacts/ingestion/`.
-- Contract validation for required columns and expected column types.
-- Unit test suite covering ingestion, jobs, storage, metadata, and quality validation.
-
-## Current Flow
-
-The implemented ingestion flow is:
-
-1. Generate the list of monthly TLC files between a start date and end date.
-2. Download each parquet file from the public TLC distribution endpoint.
-3. Save each file under the configured raw output directory using partitioned paths.
-4. Write a manifest JSON artifact summarizing success and failure results.
-
-Example raw file layout:
+### Architecture
 
 ```text
-data/raw/
-	year=2025/
-		month=03/
-			yellow_tripdata_2025-03.parquet
+Source
+  ↓
+Raw
+  ↓
+Silver
+  ↓
+Gold
+  ↓
+Analysis
 ```
 
-Example manifest layout:
+A detailed explanation of the architecture, design decisions, assumptions, and trade-offs can be found in:
 
 ```text
-artifacts/ingestion/
-	manifest_YYYYMMDD_HHMMSS.json
+docs/arch_decisions.md
 ```
+
+---
+
+## Features
+
+### Ingestion
+
+* Download TLC Yellow Taxi datasets
+* Raw data preservation
+* Partitioning by year and month
+* Ingestion manifest generation
+
+### Data Quality
+
+* Contract validation
+* Required column validation
+* Data type validation
+* Duplicate detection
+* Null detection
+* Temporal consistency checks
+* Quality report generation
+
+### Transformations
+
+#### Silver Layer
+
+* Required column selection
+* Type standardization
+* Derived columns:
+
+  * pickup_year
+  * pickup_month
+  * trip_duration_minutes
+
+#### Gold Layer
+
+Generated analytical datasets:
+
+* monthly_average_total_amount
+* hourly_average_passenger_count
+
+---
 
 ## Project Structure
 
 ```text
-ny_rides/
-	contracts/       Contract definitions
-	ingestion/       TLC download logic
-	jobs/            Executable jobs and orchestration
-	metadata/        Manifest generation
-	quality/         Validators for schema and quality checks
-	shared/          Shared utilities such as logging
-	storage/         Storage abstractions and local storage
-tests/unit/        Unit tests by module
+ny-rides-transformations-python/
+
+├── ny_rides/
+│   ├── contracts/
+│   ├── ingestion/
+│   ├── jobs/
+│   ├── metadata/
+│   ├── quality/
+│   ├── storage/
+│   ├── transformations/
+│   └── shared/
+│
+├── analysis/
+├── docs/
+├── tests/
+│
+├── data/
+│   ├── raw/
+│   ├── silver/
+│   └── gold/
+│
+└── artifacts/
+    ├── ingestion/
+    └── quality/
 ```
 
-## Data Contract
+---
 
-The Yellow Taxi contract currently expects these columns:
+## Requirements
 
-- `VendorID`
-- `passenger_count`
-- `total_amount`
-- `tpep_pickup_datetime`
-- `tpep_dropoff_datetime`
+* Python 3.13
+* Java 17
+* Poetry
 
-The contract validator checks:
+---
 
-- Presence of all required columns.
-- Expected column types defined in `YellowTaxiContract.COLUMN_TYPE_RULES`.
-
-## Quality Assessment
-
-The Silver pipeline executes a set of quality validations before publishing data.
-
-**Validation Rules:**
-- Required columns presence
-- Data types correctness
-- Null checks in required columns
-- Duplicate record detection
-- Temporal consistency checks (pickup <= dropoff)
-- Negative amount detection
-
-**Results for Jan-May 2023:**
-- **19.7M rows** analyzed
-- **159 duplicated records** detected (0.0008%)
-- **562 records** with invalid pickup/dropoff ordering (0.0028%)
-- **372k records** with negative total_amount values (1.88%)
-
-Quality reports are generated as JSON artifacts in `artifacts/quality/silver/` with detailed check results and failure percentages.
-
-## Local Commands
-
-Install dependencies:
+## Installation
 
 ```bash
-make install
+poetry install
 ```
 
-Run all tests:
+---
+
+## Run Tests
 
 ```bash
 make test
 ```
 
-Run coverage:
+Current test coverage is approximately 84%.
+
+---
+
+## Execute Pipeline
+
+Run the complete pipeline:
 
 ```bash
-make coverage
+make generate-pipeline
 ```
 
-Run lint checks:
+This command executes:
+
+```text
+Download Files
+    ↓
+Build Silver
+    ↓
+Build Gold
+```
+
+Generated outputs:
+
+```text
+data/raw
+data/silver
+data/gold
+
+artifacts/ingestion
+artifacts/quality
+```
+
+---
+
+## Business Questions
+
+### Question 1
+
+What is the average total amount received per month considering all yellow taxis?
+
+Answer generated from:
+
+```text
+data/gold/monthly_average_total_amount
+```
+
+---
+
+### Question 2
+
+What is the average passenger count by hour of day during May?
+
+Answer generated from:
+
+```text
+data/gold/hourly_average_passenger_count
+```
+
+and analyzed in:
+
+```text
+analysis/
+```
+
+---
+
+## Docker
+
+Build image:
 
 ```bash
-make lint
+docker build -f docker/Dockerfile -t ny-rides .
 ```
 
-Format the codebase:
+Run pipeline:
 
 ```bash
-make format
+docker run --rm ny-rides
 ```
 
-Clean local caches and build artifacts:
+---
 
-```bash
-make clean
+## Future Improvements
+
+* End-to-end integration tests
+* Cloud object storage support (S3, GCS, ADLS)
+* CI/CD pipeline
+* Data lineage tracking
+* Incremental processing
+* AI-based reliability analysis using quality reports and metadata artifacts
+
 ```
-
-## Download Files Locally
-
-Default run:
-
-```bash
-make download-files
 ```
-
-Custom raw output directory:
-
-```bash
-make download-files OUTPUT_DIR=data/raw/custom
-```
-
-The `download-files` target runs:
-
-```bash
-poetry run python -m ny_rides.jobs.download_files \
-	--start-date 2025-01-01 \
-	--end-date 2025-05-31 \
-	--output-dir data/raw
-```
-
-## Requirements
-
-- Python 3.12+
-- Poetry
-
-Optional but useful depending on future expansion:
-
-- Java, if you later reintroduce Spark-based execution paths.
-
-## Notes
-
-- Raw data is ignored by Git through `data/`.
-- Manifest artifacts are ignored by Git through `artifacts/`.
-- There is an early `build_silver` job scaffold in the repository, but the main working flow today is the raw ingestion path.
