@@ -1,4 +1,3 @@
-
 from ny_rides.ingestion.tlc_downloader import TLCDownloader, DataFile
 
 from datetime import date
@@ -76,6 +75,7 @@ def test_should_generate_files_across_years():
 
     assert files == expected
 
+
 def test_should_download_file(mocker):
     downloader = TLCDownloader()
 
@@ -90,9 +90,11 @@ def test_should_download_file(mocker):
     mock_response.content = expected_content
     mock_response.raise_for_status.return_value = None
 
-    mock_response = mocker.patch("ny_rides.ingestion.tlc_downloader.requests.get", return_value=mock_response)
+    mock_response = mocker.patch(
+        "ny_rides.ingestion.tlc_downloader.requests.get", return_value=mock_response
+    )
 
     content = downloader.download_file(data_file)
-    
+
     assert content == expected_content
     mock_response.assert_called_once_with(data_file.url, timeout=30)

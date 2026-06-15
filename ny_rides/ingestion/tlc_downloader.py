@@ -49,5 +49,5 @@ class TLCDownloader:
         self.logger.info(f"Downloading {data_file.url}")
         response = requests.get(data_file.url, timeout=30)
         response.raise_for_status()
-       
+
         return response.content
