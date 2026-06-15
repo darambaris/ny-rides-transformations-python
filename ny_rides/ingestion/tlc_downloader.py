@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from datetime import date
 import logging
 
+import requests
+
 
 @dataclass
 class DataFile:
@@ -26,6 +28,8 @@ class TLCDownloader:
 
         files: list[DataFile] = []
 
+        self.logger.info(f"Generating file list from {start_month} to {end_month}")
+
         while start_month <= end_month:
             file_name = (
                 f"yellow_tripdata_{start_month.year}-{start_month.month:02d}.parquet"
@@ -40,3 +44,10 @@ class TLCDownloader:
                 start_month = date(start_month.year, start_month.month + 1, 1)
 
         return files
+
+    def download_file(self, data_file: DataFile) -> bytes:
+        self.logger.info(f"Downloading {data_file.url}")
+        response = requests.get(data_file.url, timeout=30)
+        response.raise_for_status()
+       
+        return response.content

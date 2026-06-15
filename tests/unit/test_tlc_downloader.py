@@ -2,7 +2,6 @@
 from ny_rides.ingestion.tlc_downloader import TLCDownloader, DataFile
 
 from datetime import date
-import requests
 
 import pytest
 
@@ -76,3 +75,24 @@ def test_should_generate_files_across_years():
     assert len(files) == 4
 
     assert files == expected
+
+def test_should_download_file(mocker):
+    downloader = TLCDownloader()
+
+    data_file = DataFile(
+        name="yellow_tripdata_2024-01.parquet",
+        url="https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet",
+    )
+
+    expected_content = b"fake parquet content"
+
+    mock_response = mocker.Mock()
+    mock_response.content = expected_content
+    mock_response.raise_for_status.return_value = None
+
+    mock_response = mocker.patch("ny_rides.ingestion.tlc_downloader.requests.get", return_value=mock_response)
+
+    content = downloader.download_file(data_file)
+    
+    assert content == expected_content
+    mock_response.assert_called_once_with(data_file.url, timeout=30)
