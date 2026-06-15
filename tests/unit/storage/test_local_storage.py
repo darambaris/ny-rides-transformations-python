@@ -34,6 +34,24 @@ def test_should_create_directory_if_not_exists(
     assert saved_path.read_bytes() == content
 
 
+def test_should_create_nested_directories_from_filename(
+    tmp_path,
+):
+    storage = LocalStorage(base_path=str(tmp_path))
+
+    content = b"test content"
+
+    saved_path = storage.save(
+        filename="year=2025/month=03/file.parquet",
+        content=content,
+    )
+
+    assert saved_path.exists()
+    assert (tmp_path / "year=2025").is_dir()
+    assert (tmp_path / "year=2025/month=03").is_dir()
+    assert saved_path.read_bytes() == content
+
+
 def test_should_raise_value_error_for_empty_content(
     tmp_path,
 ):

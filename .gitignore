@@ -219,6 +219,7 @@ __marimo__/
 
 # avoid uploading data files
 data/
+artifacts/
 
 #vscode
 .DS_Store

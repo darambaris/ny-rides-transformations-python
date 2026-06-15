@@ -6,6 +6,7 @@ from ny_rides.ingestion.tlc_downloader import DataFile
 
 from ny_rides.jobs.download_files import (
     DownloadResult,
+    build_partitioned_path,
     log_summary,
     main,
 )
@@ -33,7 +34,11 @@ def test_should_download_all_files_successfully(mocker):
         return_value=mock_downloader,
     )
 
-    mocker.patch("ny_rides.jobs.download_files.LocalStorage")
+    mock_storage = mocker.Mock()
+    mocker.patch(
+        "ny_rides.jobs.download_files.LocalStorage",
+        return_value=mock_storage,
+    )
 
     results = execute(
         start_date=date(2024, 1, 1),
@@ -47,6 +52,14 @@ def test_should_download_all_files_successfully(mocker):
     assert results[1].success is True
 
     assert mock_downloader.download_file.call_count == 2
+    mock_storage.save.assert_any_call(
+        filename="year=2024/month=01/yellow_tripdata_2024-01.parquet",
+        content=b"file content",
+    )
+    mock_storage.save.assert_any_call(
+        filename="year=2024/month=02/yellow_tripdata_2024-02.parquet",
+        content=b"file content",
+    )
 
 
 def test_should_continue_when_download_fails(mocker):
@@ -54,11 +67,11 @@ def test_should_continue_when_download_fails(mocker):
 
     files = [
         DataFile(
-            name="file1.parquet",
+            name="yellow_tripdata_2024-01.parquet",
             url="url1",
         ),
         DataFile(
-            name="file2.parquet",
+            name="yellow_tripdata_2024-02.parquet",
             url="url2",
         ),
     ]
@@ -126,7 +139,7 @@ def test_should_mark_download_as_failed_when_storage_save_fails(
 
     files = [
         DataFile(
-            name="file1.parquet",
+            name="yellow_tripdata_2024-01.parquet",
             url="url1",
         )
     ]
@@ -155,6 +168,18 @@ def test_should_mark_download_as_failed_when_storage_save_fails(
     assert len(results) == 1
     assert results[0].success is False
     assert results[0].error_message == "Disk full"
+
+
+def test_should_build_partitioned_path_from_tlc_file_name():
+    output_file_path = build_partitioned_path("yellow_tripdata_2025-03.parquet")
+
+    assert output_file_path == "year=2025/month=03/yellow_tripdata_2025-03.parquet"
+
+
+def test_should_keep_original_file_name_when_pattern_is_unknown():
+    output_file_path = build_partitioned_path("file.parquet")
+
+    assert output_file_path == "file.parquet"
 
 
 def test_should_log_warning_when_downloads_fail(
@@ -236,6 +261,9 @@ def test_main_should_configure_logging_execute_and_log_summary(
         return_value=[DownloadResult(file_name="file.parquet", success=True)],
     )
     mock_log_summary = mocker.patch("ny_rides.jobs.download_files.log_summary")
+    mock_write_manifest = mocker.patch(
+        "ny_rides.jobs.download_files.write_manifest"
+    )
 
     main()
 
@@ -248,5 +276,8 @@ def test_main_should_configure_logging_execute_and_log_summary(
         output_dir="tmp/downloads",
     )
     mock_log_summary.assert_called_once_with(
+        [DownloadResult(file_name="file.parquet", success=True)]
+    )
+    mock_write_manifest.assert_called_once_with(
         [DownloadResult(file_name="file.parquet", success=True)]
     )

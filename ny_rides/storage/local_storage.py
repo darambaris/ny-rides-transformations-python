@@ -23,6 +23,7 @@ class LocalStorage(Storage):
         self.base_path.mkdir(parents=True, exist_ok=True)
 
         destination = self.base_path / filename
+        destination.parent.mkdir(parents=True, exist_ok=True)
 
         logger.info("Saving file %s", destination)
 

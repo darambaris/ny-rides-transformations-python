@@ -1,15 +1,26 @@
 from argparse import ArgumentParser
 from dataclasses import dataclass
 from datetime import date
+import re
 
 from ny_rides.ingestion.tlc_downloader import TLCDownloader
 from ny_rides.shared.logging import configure_logging
 
+from ny_rides.metadata.manifest_ingestion_writer import write_manifest
 from ny_rides.storage.local_storage import LocalStorage
 
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def build_partitioned_path(file_name: str) -> str:
+    match = re.search(r"_(\d{4})-(\d{2})\.parquet$", file_name)
+    if not match:
+        return file_name
+
+    year, month = match.groups()
+    return f"year={year}/month={month}/{file_name}"
 
 
 @dataclass
@@ -39,7 +50,8 @@ def execute(
     for file in files:
         try:
             content = downloader.download_file(file)
-            storage.save(filename=file.name, content=content)
+            output_file_path = build_partitioned_path(file.name)
+            storage.save(filename=output_file_path, content=content)
             results.append(DownloadResult(file_name=file.name, success=True))
         except Exception as e:
             results.append(
@@ -88,6 +100,9 @@ def main():
     )
 
     log_summary(results)
+
+    manifest_path = write_manifest(results)
+    logger.info("Manifest saved to %s", manifest_path)
 
 
 if __name__ == "__main__":
