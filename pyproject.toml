@@ -1,7 +1,7 @@
 [project]
 name = "ny-rides-transformations-python"
 version = "0.1.0"
-description = "Data quality-first pipeline for NYC Taxi trips featuring PySpark, dbt, data contracts, automated testing, lineage-aware validation, and AI-driven reliability insights."
+description = "Data quality-first pipeline for NYC Taxi trips featuring PySpark, data contracts, automated testing, and lineage-aware validation."
 authors = [
     {name = "Jessika Darambaris",email = "jessika.darambaris@gmail.com"}
 ]

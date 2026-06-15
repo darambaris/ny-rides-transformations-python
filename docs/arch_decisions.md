@@ -253,7 +253,4 @@ Potential future enhancements include:
 * CI/CD pipeline execution
 * Data lineage tracking
 * Incremental processing
-* Reliability Agent capable of analyzing manifests and quality reports to identify potential root causes and data quality degradation trends
-
-```
-```
+* Expanded monitoring and observability over quality and metadata artifacts

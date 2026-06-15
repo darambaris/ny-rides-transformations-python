@@ -213,6 +213,13 @@ data/gold/monthly_average_total_amount
 
 What is the average passenger count by hour of day during May?
 
+To answer this specifically for May, run the pipeline with:
+
+```bash
+source .env.local
+make generate-pipeline START_DATE=2025-05-01 END_DATE=2025-05-31
+```
+
 Answer generated from:
 
 ```text
@@ -275,4 +282,4 @@ docker compose -f docker/docker-compose.yml run --rm -e START_DATE=2025-05-01 -e
 * CI/CD pipeline
 * Data lineage tracking
 * Incremental processing
-* AI-based reliability analysis using quality reports and metadata artifacts
+* Expanded monitoring and observability over quality and metadata artifacts
