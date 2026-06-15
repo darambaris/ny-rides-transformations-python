@@ -3,6 +3,7 @@ from ny_rides.ingestion.tlc_downloader import TLCDownloader, DataFile
 from datetime import date
 
 import pytest
+import requests
 
 
 def test_should_raise_value_error_in_generate_files():
@@ -98,3 +99,24 @@ def test_should_download_file(mocker):
 
     assert content == expected_content
     mock_response.assert_called_once_with(data_file.url, timeout=30)
+
+
+def test_should_raise_runtime_error_when_download_request_fails(
+    mocker,
+):
+    downloader = TLCDownloader()
+
+    data_file = DataFile(
+        name="yellow_tripdata_2024-01.parquet",
+        url="https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet",
+    )
+
+    mocker.patch(
+        "ny_rides.ingestion.tlc_downloader.requests.get",
+        side_effect=requests.RequestException("network error"),
+    )
+
+    with pytest.raises(
+        RuntimeError, match="Download failed for yellow_tripdata_2024-01.parquet"
+    ):
+        downloader.download_file(data_file)

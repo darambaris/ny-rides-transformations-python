@@ -230,9 +230,7 @@ def test_main_should_configure_logging_execute_and_log_summary(
         "ny_rides.jobs.download_files.execute",
         return_value=[DownloadResult(file_name="file.parquet", success=True)],
     )
-    mock_log_summary = mocker.patch(
-        "ny_rides.jobs.download_files.log_summary"
-    )
+    mock_log_summary = mocker.patch("ny_rides.jobs.download_files.log_summary")
 
     main()
 

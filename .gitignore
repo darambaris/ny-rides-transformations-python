@@ -217,6 +217,8 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+# avoid uploading data files
+data/
 
 #vscode
 .DS_Store

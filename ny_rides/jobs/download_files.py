@@ -8,6 +8,7 @@ from ny_rides.shared.logging import configure_logging
 from ny_rides.storage.local_storage import LocalStorage
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 

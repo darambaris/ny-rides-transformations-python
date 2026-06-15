@@ -47,7 +47,11 @@ class TLCDownloader:
 
     def download_file(self, data_file: DataFile) -> bytes:
         self.logger.info(f"Downloading {data_file.url}")
-        response = requests.get(data_file.url, timeout=30)
-        response.raise_for_status()
 
-        return response.content
+        try:
+            response = requests.get(data_file.url, timeout=30)
+            response.raise_for_status()
+            return response.content
+        except requests.RequestException as e:
+            self.logger.exception(f"Failed to download {data_file.url}: {e}")
+            raise RuntimeError(f"Download failed for {data_file.name}") from e
