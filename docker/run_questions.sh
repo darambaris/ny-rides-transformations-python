@@ -16,10 +16,8 @@ print("Q1")
 q1.show()
 
 q2 = (
-    spark.read.parquet("data/silver")
-    .filter(F.month(F.col("tpep_pickup_datetime")) == 5)
-    .groupBy(F.hour(F.col("tpep_pickup_datetime")).alias("pickup_hour"))
-    .agg(F.round(F.avg("passenger_count"), 2).alias("avg_passenger_count"))
+    spark.read.parquet("data/gold/hourly_average_passenger_count")
+    .withColumn("avg_passenger_count", F.round(F.col("avg_passenger_count"), 2))
     .orderBy("pickup_hour")
 )
 print("Q2")
