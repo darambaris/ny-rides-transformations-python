@@ -7,6 +7,8 @@ def _valid_dataframe() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "VendorID": [1, 2],
+            "passenger_count": [1, 2],
+            "total_amount": [12.5, 19.8],
             "tpep_pickup_datetime": pd.to_datetime(
                 [
                     "2025-01-01 10:00:00",
@@ -19,9 +21,6 @@ def _valid_dataframe() -> pd.DataFrame:
                     "2025-01-01 11:15:00",
                 ]
             ),
-            "passenger_count": [1, 2],
-            "trip_distance": [2.4, 5.1],
-            "fare_amount": [12.5, 19.8],
         }
     )
 
@@ -33,7 +32,7 @@ def test_should_accept_valid_schema():
 
 
 def test_should_fail_when_required_column_is_missing():
-    df = _valid_dataframe().drop(columns=["fare_amount"])
+    df = _valid_dataframe().drop(columns=["total_amount"])
 
     with pytest.raises(
         ValueError,
