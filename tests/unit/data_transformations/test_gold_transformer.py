@@ -62,7 +62,7 @@ def test_should_add_pickup_hour_column(mocker):
     mock_f.hour.assert_called_once_with("tpep_pickup_datetime")
 
 
-def test_should_group_by_pickup_hour(mocker):
+def test_should_group_by_pickup_year_month_and_hour(mocker):
     dataframe = mocker.Mock()
     with_hour = mocker.Mock()
     grouped = mocker.Mock()
@@ -79,9 +79,13 @@ def test_should_group_by_pickup_hour(mocker):
     transformer = GoldTransformer()
     transformer.build_hourly_average_passenger_count(dataframe)
 
-    with_hour.groupBy.assert_called_once_with("pickup_hour")
+    with_hour.groupBy.assert_called_once_with(
+        "pickup_year", "pickup_month", "pickup_hour"
+    )
     grouped.agg.assert_called_once()
-    aggregated.orderBy.assert_called_once_with("pickup_hour")
+    aggregated.orderBy.assert_called_once_with(
+        "pickup_year", "pickup_month", "pickup_hour"
+    )
 
 
 def test_should_return_dataframe_from_hourly_average(mocker):

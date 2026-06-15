@@ -28,12 +28,14 @@ class GoldTransformer:
         Aggregate dataset with hourly average passenger_count across all yellow taxis.
 
         Returns a DataFrame with columns:
+        - pickup_year
+        - pickup_month
         - pickup_hour
         - avg_passenger_count
         """
         return (
             dataframe.withColumn("pickup_hour", F.hour("tpep_pickup_datetime"))
-            .groupBy("pickup_hour")
+            .groupBy("pickup_year", "pickup_month", "pickup_hour")
             .agg(F.round(F.avg("passenger_count"), 2).alias("avg_passenger_count"))
-            .orderBy("pickup_hour")
+            .orderBy("pickup_year", "pickup_month", "pickup_hour")
         )
