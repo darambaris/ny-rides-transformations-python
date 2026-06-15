@@ -1,6 +1,7 @@
-.PHONY: install test coverage lint format download-files
+.PHONY: install test coverage lint format download-files build-silver
 
-OUTPUT_DIR ?= data/raw
+RAW_PATH ?= data/raw
+SILVER_PATH ?= data/silver
 
 install:
 	poetry install
@@ -34,4 +35,9 @@ download-files:
 	poetry run python -m ny_rides.jobs.download_files \
 		--start-date 2025-01-01 \
 		--end-date 2025-05-31 \
-		--output-dir $(OUTPUT_DIR)
+		--output-dir $(RAW_PATH)
+
+build-silver:
+	poetry run python -m ny_rides.jobs.build_silver \
+		--raw-path $(RAW_PATH) \
+		--silver-path $(SILVER_PATH)
