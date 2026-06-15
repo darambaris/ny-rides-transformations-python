@@ -7,6 +7,7 @@ def test_should_build_silver_layer(mocker):
     validator = mocker.Mock()
     transformer = mocker.Mock()
     quality_validator = mocker.Mock()
+    mock_write_manifest = mocker.patch("ny_rides.jobs.build_silver.write_manifest")
 
     raw_df = mocker.Mock()
     written_df = mocker.Mock()
@@ -16,7 +17,7 @@ def test_should_build_silver_layer(mocker):
 
     transformer.transform.return_value = silver_df
     quality_validator.validate.return_value = {"all_checks_passed": True}
-    quality_validator.write_report.return_value = "artifacts/quality/report.json"
+    mock_write_manifest.return_value = "artifacts/quality/silver/quality_report.json"
 
     job = BuildSilverJob(
         spark=spark,
@@ -46,7 +47,7 @@ def test_should_build_silver_layer(mocker):
     )
 
     quality_validator.validate.assert_called_once_with(written_df)
-    quality_validator.write_report.assert_called_once()
+    mock_write_manifest.assert_called_once()
 
 
 def test_should_not_block_silver_write_when_quality_fails(mocker):

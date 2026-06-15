@@ -1,0 +1,11 @@
+poetry run python -m ny_rides.jobs.download_files \
+		--start-date 2025-01-01 \
+		--end-date 2025-05-31 \
+		--output-dir data/raw
+poetry run python -m ny_rides.jobs.build_silver \
+		--raw-path data/raw \
+		--silver-path data/silver \
+		--quality-report-dir artifacts/quality/silver
+poetry run python -m ny_rides.jobs.build_gold \
+		--silver-path data/silver \
+		--gold-path data/gold

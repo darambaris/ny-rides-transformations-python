@@ -5,6 +5,7 @@ from ny_rides.shared.spark import get_spark_session
 from ny_rides.shared.logging import configure_logging
 from ny_rides.quality.contract_validator import ContractValidator
 from ny_rides.quality.quality_validator import QualityValidator
+from ny_rides.metadata.manifest_quality_writer import write_manifest
 from ny_rides.data_transformations.silver_transformer import SilverTransformer
 
 
@@ -66,7 +67,7 @@ class BuildSilverJob:
 
         try:
             quality_report = self.quality_validator.validate(written_df)
-            report_path = self.quality_validator.write_report(
+            report_path = write_manifest(
                 quality_report,
                 output_dir=self.quality_report_dir,
             )

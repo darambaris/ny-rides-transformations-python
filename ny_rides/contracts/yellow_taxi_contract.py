@@ -9,7 +9,7 @@ class YellowTaxiContract:
 
     COLUMN_TYPE_RULES = {
         "VendorID": "integer",
-        "passenger_count": "integer",
+        "passenger_count": "numeric",
         "total_amount": "numeric",
         "tpep_pickup_datetime": "datetime",
         "tpep_dropoff_datetime": "datetime",

@@ -1,11 +1,12 @@
-import json
+import logging
 from datetime import datetime
-from pathlib import Path
 
 from pyspark.sql import DataFrame
 from pyspark.sql import functions as F
 
 from ny_rides.contracts.yellow_taxi_contract import YellowTaxiContract
+
+logger = logging.getLogger(__name__)
 
 
 class QualityValidator:
@@ -134,16 +135,3 @@ class QualityValidator:
             "all_checks_passed": all_checks_passed,
             "checks": checks,
         }
-
-    @staticmethod
-    def write_report(report: dict, output_dir: str = "artifacts/quality") -> Path:
-        timestamp = datetime.now()
-        output_path = Path(output_dir)
-        output_path.mkdir(parents=True, exist_ok=True)
-
-        report_path = (
-            output_path / f"quality_report_{timestamp.strftime('%Y%m%d_%H%M%S')}.json"
-        )
-        report_path.write_text(json.dumps(report, indent=2))
-
-        return report_path
