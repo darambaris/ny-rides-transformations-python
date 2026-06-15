@@ -117,7 +117,14 @@ poetry install
 Configure environment variables for Spark/Java:
 
 ```bash
+cp .env.example .env.local
 source .env.local
+```
+
+If `.env.local` is already tracked by git in your clone, untrack it once:
+
+```bash
+git rm --cached .env.local
 ```
 
 Validate Java is available for Spark:
