@@ -1,24 +1,24 @@
-from dataclasses import dataclass
+from argparse import ArgumentParser
 from datetime import date
-import logging
 
+from ny_rides.ingestion.tlc_downloader import TLCDownloader
 
-@dataclass
-class DataFile:
-    name: str
-    url: str
+def main():
+    parser = ArgumentParser()
 
+    parser.add_argument("--start-date", required=True)
+    parser.add_argument("--end-date", required=True)
 
-class TLCDownloader:
-    
-    BASE_URL = "https://d37ci6vzurychx.cloudfront.net/trip-data"
-    
-    def __init__(self, config):
-        self.config = config
-        self.logger = logging.getLogger(__name__)
+    args = parser.parse_args()
 
-    def generate_files(self, start_date: date, end_date: date) -> list[DataFile]:
-        
-        # valid range
-        if end_date < start_date:
-            raise ValueError("End date must be greater than or equal to start date.")
+    downloader = TLCDownloader()
+
+    files = downloader.generate_files(
+        start_date=date.fromisoformat(args.start_date),
+        end_date=date.fromisoformat(args.end_date),
+    )
+
+    print(files)
+
+if __name__ == "__main__":
+    main()

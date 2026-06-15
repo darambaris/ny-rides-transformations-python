@@ -1,10 +1,10 @@
-from ny_rides.jobs.download_files import TLCDownloader
+from ny_rides.ingestion.tlc_downloader import TLCDownloader
 from datetime import date
 
 import pytest
 
 def test_should_raise_value_error_in_generate_files():
-    downloader = TLCDownloader(config={})
+    downloader = TLCDownloader()
 
     with pytest.raises(
         ValueError,
