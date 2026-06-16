@@ -165,7 +165,7 @@ Current test coverage is approximately 84%.
 
 ## Execute Pipeline
 
-Run the complete pipeline for the exercise-required date range (2025-01-01 to 2025-05-31):
+Run the complete pipeline for the challenge-required date range (January 2025 to May 2025):
 
 ```bash
 source .env.local
@@ -218,7 +218,7 @@ data/gold/monthly_average_total_amount
 
 ### Question 2
 
-What is the average passenger count by hour of day during May?
+What is the average passenger count by hour of day during May 2025?
 
 Answer generated from:
 
@@ -282,4 +282,4 @@ docker compose -f docker/docker-compose.yml run --rm -e START_DATE=2025-05-01 -e
 * CI/CD pipeline
 * Data lineage tracking
 * Incremental processing
-* Expanded monitoring and observability over quality and metadata artifacts
+* Reliability Agent capable of analyzing manifests, lineage and quality reports to identify potential data quality issues and root causes
